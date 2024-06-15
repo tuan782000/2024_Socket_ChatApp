@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <title>Simple Chat App</title>
+        <script src="/socket.io/socket.io.js"></script>
+        <style>
+            #messages {
+                list-style-type: none;
+                margin: 0;
+                padding: 0;
+            }
+
+            #messages li {
+                padding: 5px 10px;
+            }
+
+            #messages li:nth-child(odd) {
+                background: #eee;
+            }
+        </style>
+    </head>
+    <body>
+        <ul id="messages"></ul>
+        <form action="" id="form">
+            <input type="text" id="input" autocomplete="off" />
+            <button>Send</button>
+        </form>
+
+        <script>
+            // 1. Select the DOM Elements - Chọn phần tử thông qua DOM elements
+            const form = document.getElementById("form");
+            const input = document.getElementById("input");
+
+            // 2. Create instance of socket. - tạo ra socket dựa trên io
+            const socket = io();
+
+            // 3. Attach event listener to the form: Đính kèm người nghe sự kiện vào biểu mẫu
+            form.addEventListener("submit", (e) => {
+                e.preventDefault();
+
+                if (input.value) {
+                    // 4. Providing Data "to" the server
+                    // 4. Cung cấp dữ liệu "đến" máy chủ
+                    socket.emit("chat message", input.value);
+                    input.value = "";
+                }
+            });
+
+            // 4. Receiving/Getting data "from" the server
+            // 4. Nhận/Nhận dữ liệu "từ" server
+            socket.on("chat message", (msg) => {
+                const item = document.createElement("li");
+                item.textContent = msg;
+                document.getElementById("messages").appendChild(item);
+            });
+        </script>
+    </body>
+</html>
